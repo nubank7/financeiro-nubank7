@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel Financeiro + Upload Documentos - Estilo Nubank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a2e0c3f01d.js" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0eff5;
+      margin: 0;
+      padding: 30px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container-page {
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 20px 30px 40px 30px;
+    }
+    h2 {
+      text-align: center;
+      color: #820ad1;
+      margin-bottom: 24px;
+    }
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 0;
+      cursor: pointer;
+      font-weight: 600;
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: none;
+      color: #6e0fb3;
+      font-size: 16px;
+      transition: border-color 0.3s, color 0.3s;
+      border-radius: 8px 8px 0 0;
+    }
+    .tab-btn.active {
+      border-bottom-color: #820ad1;
+      color: #820ad1;
+      font-weight: 700;
+      background: #f5e6ff;
+    }
+    input, select, .btn {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+    }
+    select {
+      appearance: none;
+      background: url('data:image/svg+xml;utf8,<svg fill="%236e0fb3" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 10px center;
+      background-size: 16px;
+      cursor: pointer;
+    }
+    .btn {
+      background: #820ad1;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
+      border-radius: 8px;
+    }
+    .btn:hover {
+      background: #6e0fb3;
+    }
+    .btn.apagar {
+      background: #e74c3c;
+    }
+    .btn.apagar:hover {
+      background: #c0392b;
+    }
+    .form-block {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      background: #fafafa;
+      position: relative;
+    }
+    .form-block h3 {
+      margin-bottom: 10px;
+      color: #4b0076;
+    }
+    .alert-erro {
+      background: #ffecec;
+      color: #c0392b;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 15px;
+      display: none;
+      font-weight: 600;
+    }
+    .lembrete {
+      background: #f0f8ff;
+      border-left: 4px solid #820ad1;
+      padding: 12px;
+      margin-top: -8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .dados-salvos {
+      background: #f7ecfc;
+      border-left: 4px solid #820ad1;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+    }
+    .resultado {
+      font-weight: 600;
+      margin-top: 12px;
+      min-height: 20px;
+      color: #27ae60;
+    }
+    .upload-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .upload-group img {
+      height: 60px;
+      border-radius: 6px;
+    }
+    .upload-group-description {
+      font-size: 13px;
+      color: #6e0fb3;
+      margin-bottom: 10px;
+      padding-left: 4px;
+      font-weight: 500;
+    }
+    #cropperModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    #cropperModal > div {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    #cropperModal img {
+      max-width: 100%;
+      max-height: 400px;
+      display: block;
+      margin: 0 auto 10px;
+    }
+    #cropperModal button {
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #cropButton {
+      background: #820ad1;
+      color: white;
+    }
+    #cropButton:hover {
+      background: #6e0fb3;
+    }
+    #cancelCrop {
+      background: #ccc;
+      color: #333;
+    }
+    #cancelCrop:hover {
+      background: #aaa;
+    }
+    .table-container {
+      margin-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      color: #4b0076;
+    }
+    tr.aprovada {
+      background-color: #e6f4ea;
+    }
+    tr.reprovada {
+      background-color: #fcecec;
+    }
+    tr.analise {
+      background-color: #fff8e1;
+    }
+  </style>
+</head>
+<body style="background-color: #820ad1;">
+  <div class="container-page">
+    <h2><i class="fas fa-users-cog"></i> Painel Financeiro + Documentos</h2>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="toggleTab('financeiro', this)">Financeiro</button>
+      <button class="tab-btn" onclick="toggleTab('documentos', this)">Documentos</button>
+    </div>
+    <div id="financeiro">
+      <button class="btn" onclick="adicionarFormulario()">Adicionar Formulário</button>
+      <div id="formulariosContainer"></div>
+      <div class="table-container">
+        <h3>Dados Salvos</h3>
+        <table id="tabelaDados">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Valor</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="corpoTabela"></tbody>
+        </table>
+      </div>
+      <div id="painelTotais" style="margin-top:20px; padding:15px; background:#f7ecfc; border-left:4px solid #820ad1; border-radius:8px; font-weight:600; color:#4b0076; font-size:16px;">
+        Nenhum formulário adicionado ainda.
+      </div>
+    </div>
+    <div id="documentos" style="display:none;">
+      <form id="formDocumentos" enctype="multipart/form-data" onsubmit="return validarForm();" method="POST" action="upload.php" novalidate>
+        <label for="usuario">Nome ou ID do Usuário</label>
+        <input type="text" id="usuario" name="usuario" placeholder="Nome ou ID do Usuário" required />
+        <label for="email">Email do Usuário</label>
+        <input type="email" id="email" name="email" placeholder="Email do Usuário" required />
+        <label for="selfie">Selfie com Documento</label>
+        <div class="upload-group-description">Imagem clara, rosto visível e documento legível. <strong>Tamanho recomendado:</strong> 1200x1600px, até 5MB</div>
+        <div class="upload-group">
+          <input type="file" id="selfie" name="selfie" accept="image/*,.pdf" required />
+          <img src="img/self.jpeg"Exemplo Selfie" />
+        </div>
+        <label for="cnh_frente">CNH Frente</label>
+        <div class="upload-group-description">Documento inteiro, bordas visíveis, sem reflexos. <strong>Mínimo:</strong> 800x600px, até 5MB</div>
+        <div class="upload-group">
+          <input type="file" id="cnh_frente" name="cnh_frente" accept="image/*,.pdf" required />
+          <img src="img/frente.jpeg" alt="Frente CNH" />
+        </div>
+        <label for="cnh_verso">CNH Verso</label>
+        <div class="upload-group-description">Texto visível, sem corte, sem sombra. <strong>Mínimo:</strong> 800x600px, até 5MB</div>
+        <div class="upload-group">
+          <input type="file" id="cnh_verso" name="cnh_verso" accept="image/*,.pdf" required />
+          <img src="img/verso.jpeg"alt="Verso CNH" />
+        </div>
+        <label for="rg_frente">RG Frente</label>
+        <div class="upload-group-description">Foto e nome legíveis, imagem centralizada. <strong>Mínimo:</strong> 800x600px, até 5MB</div>
+        <div class="upload-group">
+          <input type="file" id="rg_frente" name="rg_frente" accept="image/*,.pdf" required />
+          <img src="img/rgfrente.jpeg"alt="RG Frente" />
+        </div>
+        <label for="rg_verso">RG Verso</label>
+        <div class="upload-group-description">Documento limpo e visível. <strong>Mínimo:</strong> 800x600px, até 5MB</div>
+        <div class="upload-group">
+          <input type="file" id="rg_verso" name="rg_verso" accept="image/*,.pdf" required />
+          <img src="img/rgverso.jpeg"RG Verso" />
+        </div>
+        <div class="lembrete"><i class="fas fa-clock"></i> Lembrete: volte no dia <strong id="dataLembrete"></strong> para verificar atualizações.</div>
+        <div id="alertaErro" class="alert-erro"></div>
+        <button type="submit" class="btn">Enviar Documentos</button>
+      </form>
+    </div>
+  </div>
+  <div id="cropperModal">
+    <div>
+      <h3>Recorte sua foto</h3>
+      <img id="imageToCrop" alt="Imagem para recortar" />
+      <div>
+        <button type="button" id="cropButton">Confirmar</button>
+        <button type="button" id="cancelCrop">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <a href="logout.php" style="color:red; font-weight:bold; display:block; text-align:center; margin-top:20px;">Sair</a>
+  <script>
+    // Verifica se usuário está logado; se não, redireciona para login
+    if (localStorage.getItem("logado") !== "sim") {
+      window.location.href = "login.html";
+    }
+
+    // Controle das abas
+    function toggleTab(tab, el) {
+      document.getElementById('financeiro').style.display = tab === 'financeiro' ? 'block' : 'none';
+      document.getElementById('documentos').style.display = tab === 'documentos' ? 'block' : 'none';
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Validação do formulário de documentos
+    function validarForm() {
+      const campos = ['usuario', 'email', 'selfie', 'cnh_frente', 'cnh_verso', 'rg_frente', 'rg_verso'];
+      const erros = [];
+      campos.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el.value) {
+          erros.push(`Preencha o campo ${id.replace('_', ' ')}`);
+        }
+      });
+      const alertaErro = document.getElementById('alertaErro');
+      if (erros.length > 0) {
+        alertaErro.textContent = erros.join('; ');
+        alertaErro.style.display = 'block';
+        return false;
+      }
+      alertaErro.style.display = 'none';
+      return true;
+    }
+
+    // Função para baixar arquivo de texto
+    function downloadTextFile(dado) {
+      const content = `Formulário Financeiro #${dado.id}\nNome: ${dado.nome}\nEmail: ${dado.email}\nSenha: ${dado.senha}\nValor: ${dado.valor || 'Não informado'}\nStatus: ${dado.status ? dado.status.charAt(0).toUpperCase() + dado.status.slice(1) : 'Não informado'}\nData de Cadastro: ${dado.dataCadastro}`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Formulario_Financeiro_${dado.id}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Atualiza a data do lembrete e carrega dados salvos
+    window.addEventListener('DOMContentLoaded', () => {
+      const hoje = new Date();
+      hoje.setDate(hoje.getDate() + 2);
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const ano = hoje.getFullYear();
+      document.getElementById('dataLembrete').textContent = `${dia}/${mes}/${ano}`;
+      // Carrega dados financeiros salvos
+      const saved = localStorage.getItem('dadosFinanceiros');
+      if (saved) {
+        dadosFinanceiros.push(...JSON.parse(saved));
+        dadosFinanceiros.forEach(dado => {
+          adicionarFormulario();
+          const form = document.querySelector(`div.form-block[data-id="${dado.id}"]`);
+          form.querySelector('input[name="nome"]').value = dado.nome;
+          form.querySelector('input[name="email"]').value = dado.email;
+          form.querySelector('input[name="senha"]').value = dado.senha;
+          form.querySelector('input[name="valor"]').value = dado.valor || '';
+          form.querySelector('select[name="status"]').value = dado.status || '';
+          const lembreteDiv = form.querySelector('.lembrete');
+          const dataLembrete = new Date(dado.dataCadastro);
+          dataLembrete.setDate(dataLembrete.getDate() + 2);
+          const dia = String(dataLembrete.getDate()).padStart(2, '0');
+          const mes = String(dataLembrete.getMonth() + 1).padStart(2, '0');
+          const ano = dataLembrete.getFullYear();
+          lembreteDiv.textContent = `Volte no dia ${dia}/${mes}/${ano} para verificar atualizações.`;
+          lembreteDiv.style.display = 'block';
+          atualizarTabela();
+        });
+        atualizarTotais();
+      }
+      // Preenche e salva automaticamente o Formulário Financeiro #2
+      if (!dadosFinanceiros.some(dado => dado.id === 2)) {
+        contadorForm = 1; // Força o próximo formulário a ser #2
+        adicionarFormulario();
+        const form = document.querySelector(`div.form-block[data-id="2"]`);
+        if (form) {
+          form.querySelector('input[name="nome"]').value = 'teste';
+          form.querySelector('input[name="email"]').value = 'lopesniciel9@gmail.com';
+          form.querySelector('input[name="senha"]').value = '568468';
+          form.querySelector('input[name="valor"]').value = '';
+          form.querySelector('select[name="status"]').value = '';
+          // Salva automaticamente
+          const hoje = new Date();
+          const dataCadastro = hoje.toISOString().split('T')[0];
+          const dado = {
+            id: 2,
+            nome: 'teste',
+            email: 'lopesniciel9@gmail.com',
+            senha: '568468',
+            valor: '',
+            status: '',
+            dataCadastro: dataCadastro
+          };
+          dadosFinanceiros.push(dado);
+          localStorage.setItem('dadosFinanceiros', JSON.stringify(dadosFinanceiros));
+          downloadTextFile(dado);
+          const lembreteDiv = form.querySelector('.lembrete');
+          const dataLembrete = new Date(hoje);
+          dataLembrete.setDate(dataLembrete.getDate() + 2);
+          const dia = String(dataLembrete.getDate()).padStart(2, '0');
+          const mes = String(dataLembrete.getMonth() + 1).padStart(2, '0');
+          const ano = dataLembrete.getFullYear();
+          lembreteDiv.textContent = `Volte no dia ${dia}/${mes}/${ano} para verificar atualizações.`;
+          lembreteDiv.style.display = 'block';
+          const resultadoDiv = form.querySelector('.resultado');
+          resultadoDiv.style.color = '#27ae60';
+          resultadoDiv.textContent = 'Dados salvos com sucesso!';
+          atualizarTabela();
+          atualizarTotais();
+        }
+      }
+    });
+
+    // Cropper.js com validação de tamanho e resolução
+    let cropper;
+    const cropperModal = document.getElementById('cropperModal');
+    const imageToCrop = document.getElementById('imageToCrop');
+    const alertaErro = document.getElementById('alertaErro');
+    let currentInput = null;
+    const fileInputsIds = ['selfie', 'cnh_frente', 'cnh_verso', 'rg_frente', 'rg_verso'];
+    fileInputsIds.forEach(id => {
+      const input = document.getElementById(id);
+      input.addEventListener('change', function () {
+        alertaErro.style.display = 'none';
+        alertaErro.textContent = '';
+        if (this.files && this.files.length > 0) {
+          const file = this.files[0];
+          const maxSizeMB = 5;
+          if (file.size > maxSizeMB * 1024 * 1024) {
+            alertaErro.textContent = `Arquivo muito grande para ${id.replace('_', ' ')}. Máximo permitido: ${maxSizeMB}MB.`;
+            alertaErro.style.display = 'block';
+            this.value = '';
+            return;
+          }
+          if (!file.type.startsWith('image/')) {
+            return;
+          }
+          const img = new Image();
+          img.onload = () => {
+            if (img.width < 800 || img.height < 600) {
+              alertaErro.textContent = `Resolução muito baixa para ${id.replace('_', ' ')} (${img.width}x${img.height}). Mínimo 800x600px.`;
+              alertaErro.style.display = 'block';
+              input.value = '';
+              return;
+            }
+            currentInput = input;
+            imageToCrop.src = URL.createObjectURL(file);
+            cropperModal.style.display = 'flex';
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(imageToCrop, {
+              aspectRatio: id === 'selfie' ? 3 / 4 : null,
+              viewMode: 1,
+              movable: true,
+              zoomable: true,
+              scalable: false,
+              rotatable: false,
+              minCropBoxWidth: 800,
+              minCropBoxHeight: 600,
+              autoCropArea: 1,
+            });
+          };
+          img.onerror = () => {
+            alertaErro.textContent = `Não foi possível carregar a imagem para o campo ${id.replace('_', ' ')}.`;
+            alertaErro.style.display = 'block';
+            input.value = '';
+          };
+          img.src = URL.createObjectURL(file);
+        }
+      });
+    });
+
+    document.getElementById('cropButton').addEventListener('click', () => {
+      if (cropper && currentInput) {
+        cropper.getCroppedCanvas({
+          width: 1200,
+          height: 1600,
+          imageSmoothingQuality: 'high'
+        }).toBlob(blob => {
+          const file = new File([blob], 'cropped_image.png', { type: 'image/png' });
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          currentInput.files = dataTransfer.files;
+          cropperModal.style.display = 'none';
+          cropper.destroy();
+          cropper = null;
+          currentInput = null;
+        }, 'image/png', 0.9);
+      }
+    });
+
+    document.getElementById('cancelCrop').addEventListener('click', () => {
+      cropperModal.style.display = 'none';
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+      if (currentInput) {
+        currentInput.value = '';
+        currentInput = null;
+      }
+    });
+
+    let contadorForm = 0;
+    const dadosFinanceiros = [];
+
+    function adicionarFormulario() {
+      contadorForm++;
+      const container = document.getElementById('formulariosContainer');
+      const form = document.createElement('div');
+      form.classList.add('form-block');
+      form.setAttribute('data-id', contadorForm);
+      form.innerHTML = `
+        <h3>Formulário Financeiro #${contadorForm}</h3>
+        <label for="nome_${contadorForm}">Nome</label>
+        <input type="text" id="nome_${contadorForm}" name="nome" placeholder="Nome" required />
+        <label for="email_${contadorForm}">Email</label>
+        <input type="email" id="email_${contadorForm}" name="email" placeholder="Email" required />
+        <label for="senha_${contadorForm}">Senha</label>
+        <input type="text" id="senha_${contadorForm}" name="senha" placeholder="Senha" required />
+        <label for="valor_${contadorForm}">Valor do Documento (R$)</label>
+        <input type="number" id="valor_${contadorForm}" name="valor" placeholder="Valor do Documento (R$)" step="0.01" />
+        <label for="status_${contadorForm}">Status</label>
+        <select id="status_${contadorForm}" name="status">
+          <option value="">Selecione Status</option>
+          <option value="aprovada">Aprovada</option>
+          <option value="reprovada">Reprovada</option>
+          <option value="analise">Em Análise</option>
+        </select>
+        <button type="button" class="btn" onclick="salvarFormulario(${contadorForm}, this)">Salvar</button>
+        <button type="button" class="btn apagar" onclick="removerFormulario(${contadorForm})">Remover</button>
+        <div class="resultado"></div>
+        <div class="lembrete" style="display:none;"></div>
+      `;
+      container.appendChild(form);
+    }
+
+    function salvarFormulario(id, btn) {
+      const form = document.querySelector(`div.form-block[data-id="${id}"]`);
+      if (!form) return;
+      const nome = form.querySelector('input[name="nome"]').value.trim();
+      const email = form.querySelector('input[name="email"]').value.trim();
+      const senha = form.querySelector('input[name="senha"]').value.trim();
+      const valorInput = form.querySelector('input[name="valor"]').value;
+      const valor = valorInput ? parseFloat(valorInput) : '';
+      const status = form.querySelector('select[name="status"]').value;
+      const resultadoDiv = form.querySelector('.resultado');
+      const lembreteDiv = form.querySelector('.lembrete');
+      const erros = [];
+      if (!nome) erros.push('Nome é obrigatório');
+      if (!email) erros.push('Email é obrigatório');
+      if (!senha) erros.push('Senha é obrigatória');
+      if (valorInput && isNaN(valor)) erros.push('Valor deve ser um número válido');
+      if (erros.length > 0) {
+        resultadoDiv.style.color = '#c0392b';
+        resultadoDiv.textContent = erros.join('; ');
+        lembreteDiv.style.display = 'none';
+        return;
+      }
+      const hoje = new Date();
+      const dataCadastro = hoje.toISOString().split('T')[0];
+      const index = dadosFinanceiros.findIndex(item => item.id === id);
+      const dado = { id, nome, email, senha, valor, status, dataCadastro };
+      if (index >= 0) {
+        dadosFinanceiros[index] = dado;
+      } else {
+        dadosFinanceiros.push(dado);
+      }
+      localStorage.setItem('dadosFinanceiros', JSON.stringify(dadosFinanceiros));
+      downloadTextFile(dado);
+      resultadoDiv.style.color = '#27ae60';
+      resultadoDiv.textContent = 'Dados salvos com sucesso!';
+      const dataLembrete = new Date(hoje);
+      dataLembrete.setDate(dataLembrete.getDate() + 2);
+      const dia = String(dataLembrete.getDate()).padStart(2, '0');
+      const mes = String(dataLembrete.getMonth() + 1).padStart(2, '0');
+      const ano = dataLembrete.getFullYear();
+      lembreteDiv.textContent = `Volte no dia ${dia}/${mes}/${ano} para verificar atualizações.`;
+      lembreteDiv.style.display = 'block';
+      atualizarTabela();
+      atualizarTotais();
+    }
+
+    function removerFormulario(id) {
+      const form = document.querySelector(`div.form-block[data-id="${id}"]`);
+      if (form) form.remove();
+      const index = dadosFinanceiros.findIndex(item => item.id === id);
+      if (index >= 0) {
+        dadosFinanceiros.splice(index, 1);
+        localStorage.setItem('dadosFinanceiros', JSON.stringify(dadosFinanceiros));
+      }
+      atualizarTabela();
+      atualizarTotais();
+    }
+
+    function atualizarTabela() {
+      const corpoTabela = document.getElementById('corpoTabela');
+      corpoTabela.innerHTML = '';
+      dadosFinanceiros.forEach(dado => {
+        const row = corpoTabela.insertRow();
+        row.className = dado.status;
+        row.insertCell(0).textContent = dado.nome;
+        row.insertCell(1).textContent = dado.email;
+        row.insertCell(2).textContent = dado.valor ? `R$ ${dado.valor.toFixed(2)}` : 'Não informado';
+        row.insertCell(3).textContent = dado.status ? dado.status.charAt(0).toUpperCase() + dado.status.slice(1) : 'Não informado';
+      });
+    }
+
+    function atualizarTotais() {
+      let totalAprovada = 0;
+      let totalReprovada = 0;
+      let totalAnalise = 0;
+      dadosFinanceiros.forEach(item => {
+        const valor = Number(item.valor);
+        if (item.status === 'aprovada' && !isNaN(valor)) totalAprovada += valor;
+        else if (item.status === 'reprovada' && !isNaN(valor)) totalReprovada += valor;
+        else if (item.status === 'analise' && !isNaN(valor)) totalAnalise += valor;
+      });
+      const totalLiquido = totalAprovada - totalReprovada;
+      const painel = document.getElementById('painelTotais');
+      if (dadosFinanceiros.length === 0) {
+        painel.textContent = 'Nenhum formulário adicionado ainda.';
+        return;
+      }
+      painel.innerHTML = `
+        <div>Subtotal Aprovada: R$ ${totalAprovada.toFixed(2)}</div>
+        <div>Subtotal Reprovada: R$ ${totalReprovada.toFixed(2)}</div>
+        <div>Subtotal Em Análise: R$ ${totalAnalise.toFixed(2)}</div>
+        <hr>
+        <div>Total Líquido (Aprovada - Reprovada): R$ ${totalLiquido.toFixed(2)}</div>
+      `;
+    }
+  </script>
+</body>
+</html>
