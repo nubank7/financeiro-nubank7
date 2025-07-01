@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel Financeiro + Upload Documentos - Estilo Nubank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a2e0c3f01d.js" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0eff5;
+      margin: 0;
+      padding: 30px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container-page {
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 20px 30px 40px 30px;
+    }
+    h2 {
+      text-align: center;
+      color: #820ad1;
+      margin-bottom: 24px;
+    }
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 0;
+      cursor: pointer;
+      font-weight: 600;
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: none;
+      color: #6e0fb3;
+      font-size: 16px;
+      transition: border-color 0.3s, color 0.3s;
+      border-radius: 8px 8px 0 0;
+    }
+    .tab-btn.active {
+      border-bottom-color: #820ad1;
+      color: #820ad1;
+      font-weight: 700;
+      background: #f5e6ff;
+    }
+    input, select, .btn {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+    }
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background: url('data:image/svg+xml;utf8,<svg fill="%236e0fb3" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 10px center;
+      background-size: 16px;
+      cursor: pointer;
+    }
+    .btn {
+      background: #820ad1;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
+      border-radius: 8есп
+
+System: The provided code for the main panel (`index.html`) has been updated and integrated with a new login page (`login.html`) to create a secure entry point for your financial and document upload panel. Below, I provide the complete, corrected code for both `login.html` and `index.html`, along with a `logout.php` file to handle user logout. The updates include:
+
+- **Login Page (`login.html`)**: A new page with a username and password form, styled in the Nubank-inspired design, using client-side authentication (username: "admin", password: "123456") that sets `localStorage.logado = "sim"` on successful login and redirects to `index.html`.
+- **Main Panel (`index.html`)**: Fixes for the duplicate `<head>` tag, improved form validation to show all errors at once, added accessibility attributes (e.g., `for` on labels), and `localStorage` persistence for financial data.
+- **Logout (`logout.php`)**: Clears `localStorage.logado` and redirects to `login.html`.
+
+### Files Provided
+1. **`login.html`**: The new login page with client-side authentication.
+2. **`index.html`**: The updated main panel with fixes and enhancements.
+3. **`logout.php`**: A simple server-side script to handle logout.
+
+---
+
+### 1. Login Page (`login.html`)
+
+<xaiArtifact artifact_id="5bb9270c-7914-4c81-83c4-10446c16734d" artifact_version_id="2b124544-f0fa-45e0-9004-00bc56cb3a84" title="login.html" contentType="text/html">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Painel Financeiro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a2e0c3f01d.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0eff5;
+      margin: 0;
+      padding: 30px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container-login {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      padding: 30px;
+      text-align: center;
+    }
+    h2 {
+      color: #820ad1;
+      margin-bottom: 24px;
+    }
+    input, .btn {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+    }
+    .btn {
+      background: #820ad1;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background: #6e0fb3;
+    }
+    .alert-erro {
+      background: #ffecec;
+      color: #c0392b;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 15px;
+      display: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-login">
+    <h2><i class="fas fa-lock"></i> Login</h2>
+    <div id="alertaErro" class="alert-erro"></div>
+    <form id="loginForm" onsubmit="return handleLogin(event)">
+      <label for="username">Usuário</label>
+      <input type="text" id="username" name="username" placeholder="Digite seu usuário" required />
+      <label for="password">Senha</label>
+      <input type="password" id="password" name="password" placeholder="Digite sua senha" required />
+      <button type="submit" class="btn">Entrar</button>
+    </form>
+  </div>
+  <script>
+    function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const alertaErro = document.getElementById('alertaErro');
+
+      // Hardcoded credentials (replace with server-side validation in production)
+      const validUsername = 'admin';
+      const validPassword = '123456';
+
+      if (username === validUsername && password === validPassword) {
+        localStorage.setItem('logado', 'sim');
+        window.location.href = 'index.html';
+      } else {
+        alertaErro.textContent = 'Usuário ou senha incorretos.';
+        alertaErro.style.display = 'block';
+      }
+      return false;
+    }
+  </script>
+</body><br><br>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hin5i1cxn3A?si=Bmx7LYN6gLp6Crvp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</html>
